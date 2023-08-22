@@ -1,5 +1,5 @@
-package com.example.prog4.model;
 
+package com.example.prog4.model;
 
 import com.example.prog4.model.enums.EmployeeSortField;
 import com.example.prog4.model.utilities.DateRange;
@@ -38,13 +38,19 @@ public class EmployeeFilter implements Serializable {
     private String perPage = "5";
 
     public Integer getIntPage() {
-        if (this.page == null || this.page.isBlank()) return 1;
-        return Integer.valueOf(this.page);
+        return parseOrDefault(page, 1);
     }
 
     public Integer getIntPerPage() {
-        if (this.perPage == null || this.perPage.isBlank()) return 10;
-        return Integer.valueOf(this.perPage);
+        return parseOrDefault(perPage, 10);
     }
 
+    private Integer parseOrDefault(String value, int defaultValue) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
 }
+

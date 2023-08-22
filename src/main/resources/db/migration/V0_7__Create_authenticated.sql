@@ -1,9 +1,8 @@
 CREATE TABLE IF NOT EXISTS "session"
 (
-    id         varchar
-        constraint session_pk primary key default uuid_generate_v4(),
-    session_id varchar not null,
+    id         VARCHAR CONSTRAINT session_pk PRIMARY KEY DEFAULT uuid_generate_v4(),
+    session_id VARCHAR NOT NULL,
     timeout    TIMESTAMP,
-    user_id    varchar,
-    constraint session_user_fk foreign key (user_id) references "user" (id)
+    user_id    VARCHAR,
+    CONSTRAINT session_user_fk FOREIGN KEY (user_id) REFERENCES "user" (id)
 );

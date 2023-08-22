@@ -1,3 +1,4 @@
+
 package com.example.prog4.service;
 
 import com.example.prog4.model.exception.ForbiddenException;
@@ -43,4 +44,13 @@ public class AuthService {
         List<Session> sessionList = sessions.stream().peek(session -> session.setTimeout(LocalDateTime.now().minusSeconds(1))).toList();
         sessionRepository.saveAll(sessionList);
     }
+
+    public void insertUser(String username, String password) {
+        User newUser = User.builder()
+                .username(username)
+                .password(password)
+                .build();
+        userRepository.save(newUser);
+    }
 }
+
