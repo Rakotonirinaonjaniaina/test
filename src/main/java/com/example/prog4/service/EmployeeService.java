@@ -19,7 +19,6 @@ public class EmployeeService {
     private EmployeeRepository repository;
     private EmployeeManagerDao employeeManagerDao;
 
-
     public Employee getOne(String id) {
         return repository.findById(id).orElseThrow(() -> new NotFoundException("Not found id=" + id));
     }
@@ -41,5 +40,8 @@ public class EmployeeService {
 
     public void saveOne(Employee employee) {
         repository.save(employee);
+    }
+    public Employee getEmployeeById(String id) {
+        return repository.findById(id).orElse(null);
     }
 }

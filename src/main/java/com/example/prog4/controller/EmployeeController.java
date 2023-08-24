@@ -2,7 +2,9 @@ package com.example.prog4.controller;
 
 import com.example.prog4.controller.mapper.EmployeeMapper;
 import com.example.prog4.controller.validator.EmployeeValidator;
+import com.example.prog4.facade.EmployeeCNAPSFacade;
 import com.example.prog4.model.Employee;
+import com.example.prog4.model.EmployeeCNAPS;
 import com.example.prog4.model.EmployeeFilter;
 import com.example.prog4.service.CSVUtils;
 import com.example.prog4.service.EmployeeService;
@@ -14,12 +16,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @AllArgsConstructor
@@ -28,6 +28,7 @@ public class EmployeeController {
     private EmployeeMapper employeeMapper;
     private EmployeeValidator employeeValidator;
     private EmployeeService employeeService;
+    private EmployeeCNAPSFacade employeeCNAPSFacade;
 
     @GetMapping("/list/csv")
     public ResponseEntity<byte[]> getCsv(HttpSession session) {
@@ -49,11 +50,35 @@ public class EmployeeController {
         return "redirect:/employee/list";
     }
 
+    private String generateCnapsNumber() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
+    }
+
     @PostMapping("/createOrUpdate")
     public String saveOne(@ModelAttribute Employee employee) {
         employeeValidator.validate(employee);
-        com.example.prog4.repository.entity.Employee domain = employeeMapper.toDomain(employee);
-        employeeService.saveOne(domain);
+
+        if (employee.getId() != null) {
+            com.example.prog4.repository.entity.Employee existingEmployee =
+                    employeeService.getEmployeeById(employee.getId());
+
+            existingEmployee.setFirstName(employee.getFirstName());
+            existingEmployee.setLastName(employee.getLastName());
+            employeeService.saveOne(existingEmployee);
+        } else {
+            String generatedCnapsNumber = generateCnapsNumber();
+            employee.setCnaps(generatedCnapsNumber);
+
+            com.example.prog4.repository.entity.Employee domain = employeeMapper.toDomain(employee);
+            employeeService.saveOne(domain);
+        }
         return "redirect:/employee/list";
     }
+    @GetMapping("/cnaps/{cnapsNumber}")
+    public String getEmployeeByCnapsNumber(@PathVariable String cnapsNumber, Model model) {
+        EmployeeCNAPS employeeCNAPS = employeeCNAPSFacade.getEmployeeCNAPSByCnapsNumber(cnapsNumber);
+        model.addAttribute("employeeCNAPS", employeeCNAPS);
+        return "employee/cnaps-details";
+    }
 }
+

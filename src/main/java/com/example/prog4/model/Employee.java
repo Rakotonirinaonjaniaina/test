@@ -1,8 +1,8 @@
 package com.example.prog4.model;
-
 import com.example.prog4.repository.entity.Position;
 import com.example.prog4.repository.entity.enums.Csp;
 import com.example.prog4.repository.entity.enums.Sex;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,20 +29,28 @@ public class Employee implements Serializable {
     private Csp csp;
     private Sex sex;
     private String cin;
+
+    @JsonIgnore
     private String cnaps;
+
     private String address;
     private Integer childrenNumber;
     private String personalEmail;
     private String professionalEmail;
     private String registrationNumber;
 
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate entranceDate;
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate departureDate;
 
     private List<Position> positions;
     private List<Phone> phones;
+
+    private String endToEndId;
+
 }
